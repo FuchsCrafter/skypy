@@ -1,3 +1,5 @@
+# This is now read-only and archived until this is fixed.
+
 # skypy
 Python API Wrapper to connect to the Hypixel Skyblock API.
 
