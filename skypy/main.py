@@ -5,7 +5,7 @@ import requests
 import json
 
 class skypy:
-    """ The main class for the module. Uses an api key that you can find by running /apinew on mc.hypixel.net """
+    """ The main class for the module. Uses an api key"""
     def __init__(self, key:str, blockKeyTest:bool=False) -> None:
         global apikey
         assert key != ""
@@ -80,9 +80,8 @@ class skypy:
         def __init__(self):
             pass
 
-        def getAuctionByPlayer(self, uuid): # FIXME: currently only returns an empty set of auctions
-            """ Gets the auction by a player uuid. 
-                # Currently Broken!"""
+        def getAuctionByPlayer(self, uuid):
+            """ Gets the auction by a player uuid. """
             r = requests.get("https://api.hypixel.net/v2/skyblock/auction?key=" + apikey + "&player=" + uuid)
             returns = json.loads(r.text)
             if not returns["success"]:
@@ -90,9 +89,8 @@ class skypy:
             else:
                 return returns["auctions"]
 
-        def getAuctionByPlayerName(self, player): # FIXME: See getAuctionByPlayer
-            """ Uses the Mojang API to get the uuid of a player. 
-                # Currently Broken!"""
+        def getAuctionByPlayerName(self, player): 
+            """ Uses the Mojang API to get the uuid of a player. """
             r = requests.get("https://api.mojang.com/users/profiles/minecraft/" + player) # TODO: Create dedicated function for this
             returns = json.loads(r.text)
             try:
