@@ -116,7 +116,7 @@ class skypy:
                 print("Failed to get auction! Make sure that you api-key and the auction's ID are both correct!")
                 # raise ValueError(f"Incorrect auction ID: {auctionid}") # TODO: Check for error (if it is the invalid API key or the invalid auction id)
             else:
-                return returns["auctions"]
+                return returns["auctions"][0]
     
         def getAuctions(self, page:int=0) -> list:
             """ Gets all active auctions.. """
