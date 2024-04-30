@@ -159,32 +159,47 @@ class skypy:
             else:
                 return currentMayor
 
-        def getCurrentElection(self, quickmode=False, full=True): #TODO: Full rewrite of function
-            """ Gets the current election results. Using Quickmode only gets the canidates list with all the child data."""
-
-            r = requests.get("https://api.hypixel.net/resources/skyblock/election")
-            returns = json.loads(r.text)
-            if not quickmode:
-                return returns["current"]
+        def getCurrentElection(self, quickmode:bool=False, full:bool=True, updateCache:bool=False) -> dict: #TODO: Remaining rewrite, testing
+            """ Gets the current election results.
+            
+            Use the updateCache parameter to update the election cache, or call 
+            the updateElectionCache method of the mayor class to do so."""
+            if updateCache:
+                self.updateElectionCache()
             else:
+                returns = self.currentElectionCache
+            if "current" in returns:
+                if not quickmode:
+                    return returns["current"]
+                else:
+                    _ = returns["current"]["candidates"]
+                    returns = {}
+                    for element in _:
+                        if full:
+                            returns[element["name"]] = {"name": element["name"],"key": element["key"], "votes": element["votes"], "perks": element["perks"]}
+                        else:
+                            returns[element["name"]] = {"name": element["name"],"key": element["key"], "votes": element["votes"]}
+                    return returns
+            else:
+                return False
+
+        def getElectionResults(self, updateCache):  #TODO: Remaining rewrite, testing
+            """ Gets only the election votes.
+
+            Use the updateCache parameter to update the election cache, or call 
+            the updateElectionCache method of the mayor class to do so."""
+            if updateCache:
+                self.updateElectionCache()
+            else:
+                returns = self.currentElectionCache
+            if "current" in returns:
                 _ = returns["current"]["candidates"]
                 returns = {}
                 for element in _:
-                    if full:
-                        returns[element["name"]] = {"name": element["name"],"key": element["key"], "votes": element["votes"], "perks": element["perks"]}
-                    else:
-                        returns[element["name"]] = {"name": element["name"],"key": element["key"], "votes": element["votes"]}
+                    returns[element["name"]] = element["votes"]
                 return returns
-
-        def getElectionResults(self): #TODO: Full rewrite of function
-            """ Gets only the election votes. """
-            r = requests.get("https://api.hypixel.net/resources/skyblock/election")
-            returns = json.loads(r.text)
-            _ = returns["current"]["candidates"]
-            returns = {}
-            for element in _:
-                returns[element["name"]] = element["votes"]
-            return returns
+            else:
+                return False
     class politics(mayor):
         """# Attention: Class was renamed!
             This class was renamed to 'mayor', but remains as a synonym of 'mayor'. 
