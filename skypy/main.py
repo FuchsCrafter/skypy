@@ -80,7 +80,7 @@ class skypy:
         def __init__(self):
             pass
 
-        def getAuctionByPlayer(self, uuid):
+        def getAuctionByPlayer(self, uuid:str) -> list:
             """ Gets the auction by a player uuid. """
             r = requests.get("https://api.hypixel.net/v2/skyblock/auction?key=" + apikey + "&player=" + uuid)
             returns = json.loads(r.text)
@@ -89,7 +89,7 @@ class skypy:
             else:
                 return returns["auctions"]
 
-        def getAuctionByPlayerName(self, player): 
+        def getAuctionByPlayerName(self, player:str) -> list: 
             """ Uses the Mojang API to get the uuid of a player. """
             r = requests.get("https://api.mojang.com/users/profiles/minecraft/" + player) # TODO: Create dedicated function for this
             returns = json.loads(r.text)
@@ -100,15 +100,15 @@ class skypy:
             else: 
                 return self.getAuctionByPlayer(playeruuid)
         
-        def getAuctionsByPlayer(self, uuid):
+        def getAuctionsByPlayer(self, uuid:str) -> list:
             """Alias function for getAuctionByPlayer"""
             return self.getAuctionByPlayer(uuid=uuid)
             
-        def getAuctionsByPlayerName(self, player):
+        def getAuctionsByPlayerName(self, player:str) -> list:
             """Alias function for getAuctionByPlayerName"""
             return self.getAuctionByPlayerName(player=player)
 
-        def getAuction(self, auctionid):
+        def getAuction(self, auctionid:str) -> dict:
             """ Gets an auction by its ID. """
             r = requests.get("https://api.hypixel.net/v2/skyblock/auction?key=" + apikey + "&uuid=" + auctionid)
             returns = json.loads(r.text)
