@@ -117,7 +117,7 @@ class skypy:
                 # raise ValueError(f"Incorrect auction ID: {auctionid}") # TODO: Check for error (if it is the invalid API key or the invalid auction id)
             else:
                 return returns["auctions"][0]
-    
+
         def getAuctions(self, page:int=0) -> list:
             """ Gets all active auctions.. """
             r = requests.get("https://api.hypixel.net/v2/skyblock/auctions?page=" + str(page))
@@ -138,11 +138,8 @@ class skypy:
             return returns["auctions"]
         
         
-    class politics:
-        """ The politics class is there to get the current election results or the current mayor.
-            # Attention: Schedulded renaming!
-            ### In the future, this class will be renamed to mayor!
-        """
+    class mayor:
+        """ The mayor class is there to get the current election results or the current mayor."""
         def __init__(self):
             r = requests.get("https://api.hypixel.net/v2/resources/skyblock/election")
             returns = json.loads(r.text)
@@ -188,4 +185,10 @@ class skypy:
             for element in _:
                 returns[element["name"]] = element["votes"]
             return returns
-
+    class politics(mayor):
+        """# Attention: Class was renamed!
+            This class was renamed to 'mayor', but remains as a synonym of 'mayor'. 
+            
+            Please do not use it when writing new code!
+        """
+        pass
