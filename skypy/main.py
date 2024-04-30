@@ -99,6 +99,14 @@ class skypy:
                 print("Invalid Playername!")
             else: 
                 return self.getAuctionByPlayer(playeruuid)
+        
+        def getAuctionsByPlayer(self, uuid):
+            """Alias function for getAuctionByPlayer"""
+            return self.getAuctionByPlayer(uuid=uuid)
+            
+        def getAuctionsByPlayerName(self, player):
+            """Alias function for getAuctionByPlayerName"""
+            return self.getAuctionByPlayerName(player=player)
 
         def getAuction(self, auctionid):
             """ Gets an auction by its ID. """
