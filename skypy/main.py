@@ -222,10 +222,10 @@ class skypy:
                 return currentMayor
 
         def getCurrentElection(self, quickmode:bool=False, full:bool=True, updateCache:bool=False) -> dict: #TODO: Remaining rewrite, testing
-            """ Gets the current election results.
-            
-            Use the updateCache parameter to update the election cache, or call 
-            the updateElectionCache method of the mayor class to do so."""
+            """ ### (Deprecated)
+            Gets the current election results.
+
+            """
             if updateCache:
                 self.updateElectionCache()
             else:
@@ -244,24 +244,65 @@ class skypy:
                     return returns
             else:
                 return False
+        
+        def getCurrentElectionCandidates(self, full:bool=False, keys:bool=False, updateCache:bool=False) -> list:
+            if updateCache: self.updateElectionCache()
+            if "current" in self.currentElectionCache:
+                if full:
+                    return self.currentElectionCache["current"]["candidates"]
+                elif keys:
+                    candidates = [element["name"] for element in self.currentElectionCache["current"]["candidates"]]
+                    ckeys = [element["key"] for element in self.currentElectionCache["current"]["candidates"]]
 
-        def getElectionResults(self, updateCache):  #TODO: Remaining rewrite, testing
-            """ Gets only the election votes.
+                    return dict(zip(candidates, ckeys))
+                else:
+                    return [element["name"] for element in self.currentElectionCache["current"]["candidates"]]
+        
+        def getCurrentElectionPerks(self,candidate:str, short:bool=False) -> list:
+            candidate_org = candidate
+            candidate = candidate.upper()
+            electionCandidates = [el.upper() for el in self.getCurrentElectionCandidates()]
+            if candidate in electionCandidates:
+                fullElection = self.getCurrentElectionCandidates(full=True)
+                for element in fullElection:
+                    if element["name"].upper() == candidate:
+                        if short:
+                            return [el["name"] for el in element["perks"]]
+                        else:
+                            return element["perks"]
+            else: raise ValueError(f"Candidate not in current election: {candidate_org}")
 
-            Use the updateCache parameter to update the election cache, or call 
-            the updateElectionCache method of the mayor class to do so."""
+        def getCurrentElectionVotes(self, candidate:str, updateCache:bool=False) -> list[int]:
             if updateCache:
                 self.updateElectionCache()
-            else:
-                returns = self.currentElectionCache
-            if "current" in returns:
-                _ = returns["current"]["candidates"]
-                returns = {}
-                for element in _:
-                    returns[element["name"]] = element["votes"]
-                return returns
-            else:
-                return False
+            candidate_org = candidate
+            candidate = candidate.upper()
+            electionCandidates = [el.upper() for el in self.getCurrentElectionCandidates()]
+            if candidate in electionCandidates:
+                fullElection = self.getCurrentElectionCandidates(full=True)
+                for element in fullElection:
+                    if element["name"].upper() == candidate:
+                        return element["votes"]
+            else: raise ValueError(f"Candidate not in current election: {candidate_org}")
+        
+        def getCurrentElectionKeys(self, updateCache:bool=False) -> list:
+            return list(self.getCurrentElectionCandidates(keys=True, updateCache=updateCache).values())
+
+
+        def getElectionResults(self, updateCache:bool=False) -> dict[str, int]:
+            """ Gets all the election votes with the candidates in a dict"""
+            if updateCache: self.updateElectionCache()
+            candidates = self.getCurrentElectionCandidates()
+            votes = []
+            for candidate in candidates:
+                votes.append(self.getCurrentElectionVotes(candidate=candidate, updateCache=False))
+            return dict(zip(candidates,votes))
+        
+        def getCurrentElectionResults(self, updateCache:bool=False) -> dict[str, int]:
+            """ Gets all the election votes with the candidates in a dict"""
+            return self.getElectionResults(updateCache=updateCache)
+
+
     class politics(mayor):
         """# Attention: Class was renamed!
             This class was renamed to 'mayor', but remains as a synonym of 'mayor'. 
@@ -281,3 +322,9 @@ class utility:
             raise ValueError(f"Invalid player name: {player}")
         else: 
             return uuid
+    def capitalize_keys(d): # Source: https://stackoverflow.com/a/9700528
+        result = {}
+        for key, value in d.items():
+            upper_key = key.upper()
+            result[upper_key] = result.get(upper_key, 0) + value
+        return result
