@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="skypy-api",
     url="https://github.com/FuchsCrafter/skypy",
-    version="2.0.0",
+    version="2.1.0",
     author="FuchsCrafter",
     license="GPL2",
     description="Framework to connect to the Hypixel Skyblock API",
