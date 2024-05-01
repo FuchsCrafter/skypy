@@ -1,4 +1,4 @@
-# skypy
+# skypy-api
 Python API Wrapper to connect to the Hypixel Skyblock API.
 
 To get Started, head over to the [quickstart page](https://fuchscrafter.github.io/skypy/quickstart).
