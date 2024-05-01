@@ -221,10 +221,9 @@ class skypy:
             else:
                 return currentMayor
 
-        def getCurrentElection(self, quickmode:bool=False, full:bool=True, updateCache:bool=False) -> dict: #TODO: Remaining rewrite, testing
+        def getCurrentElection(self, quickmode:bool=False, full:bool=True, updateCache:bool=False) -> dict:
             """ ### (Deprecated)
             Gets the current election results.
-
             """
             if updateCache:
                 self.updateElectionCache()
@@ -245,7 +244,14 @@ class skypy:
             else:
                 return False
         
-        def getCurrentElectionCandidates(self, full:bool=False, keys:bool=False, updateCache:bool=False) -> list:
+        def getCurrentElectionCandidates(self, full:bool=False, keys:bool=False, updateCache:bool=False):
+            """Gets the current election candidates. 
+                ## Parameters
+                - keys:bool
+                    - If the names should be returned alingside their keys in a dictionary
+                - full:bool
+                    - If the full data set should be returned
+            """
             if updateCache: self.updateElectionCache()
             if "current" in self.currentElectionCache:
                 if full:
@@ -259,6 +265,13 @@ class skypy:
                     return [element["name"] for element in self.currentElectionCache["current"]["candidates"]]
         
         def getCurrentElectionPerks(self,candidate:str, short:bool=False) -> list:
+            """Gets the Perks of a specific candidate in the current election.
+                ## Parameters
+                - (required) candidate:str 
+                    - The candidate's name (not case-sensitive)
+                - short:bool
+                    - If only the titles of perks should be provided without any description
+            """
             candidate_org = candidate
             candidate = candidate.upper()
             electionCandidates = [el.upper() for el in self.getCurrentElectionCandidates()]
@@ -272,7 +285,12 @@ class skypy:
                             return element["perks"]
             else: raise ValueError(f"Candidate not in current election: {candidate_org}")
 
-        def getCurrentElectionVotes(self, candidate:str, updateCache:bool=False) -> list[int]:
+        def getCurrentElectionVotes(self, candidate:str, updateCache:bool=False) -> int:
+            """Returns the votes of a specific candidate.
+                ## Parameters
+                - (required) candidate:str
+                    - The candidate's name (not case-sensitive)
+            """
             if updateCache:
                 self.updateElectionCache()
             candidate_org = candidate
@@ -286,6 +304,7 @@ class skypy:
             else: raise ValueError(f"Candidate not in current election: {candidate_org}")
         
         def getCurrentElectionKeys(self, updateCache:bool=False) -> list:
+            """Gets the key of all candidates in the current election into a list"""
             return list(self.getCurrentElectionCandidates(keys=True, updateCache=updateCache).values())
 
 
@@ -314,7 +333,7 @@ class skypy:
 class utility:
     """Utility class"""
     def getPlayerUUID(player:str) -> str:
-        r = requests.get("https://api.mojang.com/users/profiles/minecraft/" + player) # TODO: Create dedicated function for this
+        r = requests.get("https://api.mojang.com/users/profiles/minecraft/" + player)
         returns = json.loads(r.text)
         try:
             uuid = returns["id"]
