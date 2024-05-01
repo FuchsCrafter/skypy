@@ -159,14 +159,8 @@ class skypy:
 
         def getAuctionByPlayerName(self, player:str) -> list: 
             """ Uses the Mojang API to get the uuid of a player. """
-            r = requests.get("https://api.mojang.com/users/profiles/minecraft/" + player) # TODO: Create dedicated function for this
-            returns = json.loads(r.text)
-            try:
-                playeruuid = returns["id"]
-            except:
-                print("Invalid Playername!")
-            else: 
-                return self.getAuctionByPlayer(playeruuid)
+            uuid = utility.getPlayerUUID(player=player)
+            return self.getAuctionByPlayer(uuid)
         
         def getAuctionsByPlayer(self, uuid:str) -> list:
             """Alias function for getAuctionByPlayer"""
@@ -275,3 +269,15 @@ class skypy:
             Please do not use it when writing new code!
         """
         pass
+
+class utility:
+    """Utility class"""
+    def getPlayerUUID(player:str) -> str:
+        r = requests.get("https://api.mojang.com/users/profiles/minecraft/" + player) # TODO: Create dedicated function for this
+        returns = json.loads(r.text)
+        try:
+            uuid = returns["id"]
+        except KeyError:
+            raise ValueError(f"Invalid player name: {player}")
+        else: 
+            return uuid
