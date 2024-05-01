@@ -50,6 +50,70 @@ class skypy:
     def getCurrentBingo(self):
         return json.loads(requests.get("https://api.hypixel.net/v2/resources/skyblock/bingo").text)
     
+    def getAllCollectionCategories(self, shortmode:bool=False) -> dict:
+        """Gets all collection categories"""
+        r = requests.get("https://api.hypixel.net/v2/resources/skyblock/collections")
+        r = json.loads(r.text)
+        allCollections = r["collections"]
+        if shortmode:
+            return list(allCollections.keys())
+        else: 
+            return allCollections
+    
+    class collection:
+        """Methods for working with collections"""
+        def __init__(self, category:str):
+            """Ctaegory: sets the category of the collection"""
+            self.category = category.upper()
+            self.renewCache()
+            
+        def __getitem__(self,key):
+            """Shortcut for getCollection()"""
+            return self.getCollection(key)
+
+        def renewCache(self) -> None:
+            """Renews the cache"""
+            r = requests.get("https://api.hypixel.net/v2/resources/skyblock/collections")
+            r = json.loads(r.text)
+
+            self.allCollections = r["collections"]
+            self.all = self.allCollections
+
+            self.collectionCategories = list(self.allCollections.keys())
+            self.categories = self.collectionCategories
+
+            self.categoryData = self.getCategory()
+            self.collections = self.getAllCollections()
+
+            self.version = r["version"]
+            self.lastUpdated = r["lastUpdated"]
+
+        def getCategory(self) -> dict:
+            """Gets the whole category that was selected prior"""
+            out = self.all
+            try:
+                out = out[self.category.upper()]
+            except KeyError:
+                raise ValueError(f"Invalid category name: {self.category.upper()}")
+            else:
+                return out["items"]
+            
+        def getAllCollections(self):
+            """Gets all the names of the collections of the selected category"""
+            return [element["name"] for element in list(self.categoryData.values())]
+
+        def getCollection(self, collection:str, full:bool=False) -> list:
+            """Gets a collection of the selected category"""
+            collectionCategory = self.categoryData
+            collectionName = collection.upper().replace(" ","")
+
+            for element in list(collectionCategory.values()):
+                if element["name"].upper().replace(" ","") == collectionName:
+                    if full:
+                        return element
+                    else:
+                        return element["tiers"]
+                
 
     class bazaar:
         """ The bazaar class was made to get bazaar values from certain items. """
