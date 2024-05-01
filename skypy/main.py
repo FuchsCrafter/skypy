@@ -8,6 +8,10 @@ class skypy:
     """ The main class for the module. Uses an api key"""
     def __init__(self, key:str, blockKeyTest:bool=False) -> None:
         global apikey
+        self.changeApiKey(key=key, blockKeyTest=blockKeyTest)
+
+    def changeApiKey(self, key:str, blockKeyTest:bool=False):
+        global apikey
         assert key != ""
         apikey = str(key)
         if not blockKeyTest:
